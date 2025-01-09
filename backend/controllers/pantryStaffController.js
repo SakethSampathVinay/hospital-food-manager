@@ -1,5 +1,36 @@
 import express from "express";
 import PantryStaff from "../models/PantryStaff.js";
+import jwt from "jsonwebtoken"
+
+// API for loginPantryStaff
+export const loginPantryStaff = async (request, response) => {
+  try {
+    const { email, password } = request.body;
+
+    if (
+      email === process.env.HOSPITAL_PANTRY &&
+      password === process.env.PASSWORD
+    ) {
+      const token = jwt.sign({ email }, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
+      console.log(token);
+      return response.json({
+        success: true,
+        message: "Logged Successfully",
+        token,
+      });
+    } else {
+      return response.json({
+        success: false,
+        message: "Invalid Email or Password",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    return response.json({ success: false, message: "Error Occured" });
+  }
+};
 
 // GET all Pantry Staff
 export const getPantryStaff = async (request, response) => {
@@ -41,7 +72,7 @@ export const updatePantryStaff = async (request, response) => {
     const { id } = request.params;
     const updatedData = request.body;
 
-    const updatedStaff = await PeantryStaff.findByIdAndUpdate(id, updatedData, {
+    const updatedStaff = await PantryStaff.findByIdAndUpdate(id, updatedData, {
       new: true,
     });
     if (!updatedStaff) {

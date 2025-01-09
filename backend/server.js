@@ -22,8 +22,8 @@ app.use("/api/pantry-staff", pantryStaffRouter);
 app.get("/", (request, response) => {
     console.log("API is working fine");
     response.json("API is Working Fine")
-})
+});
 
 app.listen(port, () => {
     console.log(`Server is running on ${port}`)
-})
+});
