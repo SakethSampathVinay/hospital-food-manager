@@ -3,14 +3,19 @@ import {
   getDietCharts,
   addDietChart,
   updateDietChart,
-  deleteDietChart
+  deleteDietChart,
 } from "../controllers/dietChartController.js";
+import authHospitalManager from "../middleaware/HospitalManagerAuth.js";
 
 const dietChartRouter = express.Router();
 
-dietChartRouter.get("/diet-charts", getDietCharts);
-dietChartRouter.post("/add-diet-chart", addDietChart);
-dietChartRouter.put("/diet-charts/:id", updateDietChart);
-dietChartRouter.delete("/diet-charts/:id", deleteDietChart);
+dietChartRouter.get("/diet-charts", authHospitalManager, getDietCharts);
+dietChartRouter.post("/add-diet-chart", authHospitalManager, addDietChart);
+dietChartRouter.put("/diet-charts/:id", authHospitalManager, updateDietChart);
+dietChartRouter.delete(
+  "/diet-charts/:id",
+  authHospitalManager,
+  deleteDietChart
+);
 
 export default dietChartRouter;
