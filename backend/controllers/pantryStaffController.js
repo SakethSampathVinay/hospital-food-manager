@@ -1,6 +1,8 @@
-import express from "express";
+import express, { request } from "express";
 import PantryStaff from "../models/PantryStaff.js";
-import jwt from "jsonwebtoken"
+import DietChart from "../models/DietChart.js";
+import Delivery from "../models/Delivery.js";
+import jwt from "jsonwebtoken";
 
 // API for loginPantryStaff
 export const loginPantryStaff = async (request, response) => {
@@ -108,5 +110,36 @@ export const deletePantryStaff = async (request, response) => {
     return response
       .status(500)
       .json({ success: false, message: "Error deleting Pantry Staff" });
+  }
+};
+
+// Get all meal preparation tasks
+export const getMealsTask = async (request, response) => {
+  try {
+    const tasks = await DietChart.find().populate(
+      "patientId",
+      "name roomNumber bedNumber"
+    );
+    res.json(tasks);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching meal tasks.", error });
+  }
+};
+
+// update preparation status
+export const updatePreparationStatus = async (request, response) => {
+  const { id } = request.params;
+  const { status } = request.body;
+  try {
+    const task = await DietChart.findById(id);
+    if (!task) return res.status(404).json({ message: "Task not found." });
+
+    task.preparationStatus = status;
+    await task.save();
+    response.json({ message: "Preparation status updated!", task });
+  } catch (error) {
+    response
+      .status(500)
+      .json({ message: "Error updating preparation status.", error });
   }
 };

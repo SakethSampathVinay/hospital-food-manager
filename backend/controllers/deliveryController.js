@@ -1,5 +1,7 @@
+import { request, response } from "express";
 import Delivery from "../models/Delivery.js";
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
+import PantryStaff from "../models/PantryStaff.js";
 
 // API for loginDelivery
 const loginDelivery = async (request, response) => {
@@ -124,10 +126,81 @@ const deleteDelivery = async (request, response) => {
   }
 };
 
+// Add Delivery Peronnel
+const deliveryPersonnel = async (request, response) => {
+  const { name, contactInfo } = request.body;
+  try {
+    const newPersonnel = new PantryStaff({
+      name,
+      contactInfo,
+      role: "Delivery",
+    });
+    await newPersonnel.save();
+
+    response
+      .status(201)
+      .json({ message: "Delivery personnel added!", newPersonnel });
+  } catch (error) {
+    response
+      .status(500)
+      .json({ message: "Error adding delivery personnel.", error });
+  }
+};
+
+// Get all Delivery Personnel
+const getDeliveryPersonnel = async (request, response) => {
+  try {
+    const personnel = await PantryStaff.find({ role: "Delivery" });
+    response.json({ personnel });
+  } catch (error) {
+    response
+      .status(500)
+      .json({ message: "Error fetching delivery personnel.", error });
+  }
+};
+
+// Assign a meal box to delivery personnel
+const mealBoxDeliveryPersonnel = async (request, response) => {
+  const { mealBoxId, deliveryStaffId } = request.body;
+  try {
+    const newDelivery = new Delivery({ mealBoxId, deliveryStaffId });
+    await newDelivery.save();
+    response
+      .status(201)
+      .json({ message: "Delivery task assigned!", newDelivery });
+  } catch (error) {
+    response
+      .status(500)
+      .json({ message: "Error assigning delivery task.", error });
+  }
+};
+
+const updateDeliveryStatus = async (request, response) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  try {
+    const delivery = await Delivery.findById(id);
+    if (!delivery)
+      return res.status(404).json({ message: "Delivery not found." });
+
+    delivery.status = status;
+    await delivery.save();
+    response.json({ message: "Delivery status updated!", delivery });
+  } catch (error) {
+    response
+      .status(500)
+      .json({ message: "Error updating delivery status.", error });
+  }
+};
+
 export {
   loginDelivery,
   getDeliveries,
   addDelivery,
   updateDelivery,
   deleteDelivery,
+  deliveryPersonnel,
+  getDeliveryPersonnel,
+  mealBoxDeliveryPersonnel,
+  updateDeliveryStatus,
 };

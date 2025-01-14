@@ -7,7 +7,7 @@ const Pantry = () => {
   // Fetch pantry details on component mount
   useEffect(() => {
     getPantryDetails();
-  }, [getPantryDetails]);
+  }, []);
 
   // Render loading state
   if (loading) {

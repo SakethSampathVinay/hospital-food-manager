@@ -14,7 +14,7 @@ const Patients = () => {
       <p className="mb-3 text-lg font-medium">All Patients Details</p>
       <div className="bg-white border rounded text-sm max-h-[80vh] overflow-y-auto">
         {/* Table Header */}
-        <div className="hidden sm:grid grid-cols-[0.5fr_3fr_1fr_1fr_2fr_2fr_1fr_1fr_1fr_1fr_1fr] grid-flow-col py-3 px-6 bg-gray-100 text-gray-700 border-b">
+        <div className="hidden sm:grid grid-cols-[0.5fr_2fr_1fr_1fr_2fr_2fr_1fr_1fr_1fr_1fr_1fr] py-3 px-6 bg-gray-100 text-gray-700 border-b">
           <p>#</p>
           <p>Patient</p>
           <p>Age</p>
@@ -25,7 +25,7 @@ const Patients = () => {
           <p>Bed No</p>
           <p>Floor No</p>
           <p>Contact Info</p>
-          <p>Emergency No</p>
+          <p>Emergency Info</p>
         </div>
 
         {/* Table Content */}
@@ -34,7 +34,7 @@ const Patients = () => {
             patients.map((patient, index) => (
               <div
                 key={patient._id}
-                className="grid grid-cols-[0.5fr_3fr_1fr_1fr_2fr_2fr_1fr_1fr_1fr_1fr_1fr] py-3 px-6 border-b hover:bg-gray-50"
+                className="grid grid-cols-[0.5fr_2fr_1fr_1fr_2fr_2fr_1fr_1fr_1fr_1fr_1fr] py-3 px-6 border-b hover:bg-gray-50"
               >
                 <p>{index + 1}</p>
                 <p>{patient.name}</p>

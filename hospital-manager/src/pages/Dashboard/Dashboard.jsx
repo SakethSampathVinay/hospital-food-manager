@@ -17,7 +17,7 @@ const Dashboard = () => {
   // Fetch dashboard data when the component mounts
   useEffect(() => {
     getDashData();
-  }, [getDashData]);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-100 p-6 flex flex-col items-center space-y-6">

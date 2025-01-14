@@ -10,6 +10,11 @@ import Dashboard from "./pages/Dashboard/Dashboard.jsx";
 import DietChart from "./pages/DietCharts/DietCharts.jsx";
 import DeliveryTracking from "./pages/DeliveryTracking/DeliveryTracking.jsx";
 import Pantry from "./pages/Pantry/Pantry.jsx";
+import NotFound from "./pages/NotFound.jsx";
+import AddPatient from "./pages/AddPatients/AddPatients.jsx";
+import AddDiet from "./pages/AddDiets/AddDiets.jsx";
+import AddPantryStaff from "./pages/AddPantryStaff/AddPantryStaff.jsx";
+import AssignPantry from "./pages/AssignPantry/AssignPantry.jsx";
 
 const App = () => {
   const { aToken } = useContext(AdminContext);
@@ -32,6 +37,10 @@ const App = () => {
                   element={<DeliveryTracking />}
                 />
                 <Route path="/pantry-details" element={<Pantry />} />
+                <Route path="/add-patient" element={<AddPatient />} />
+                <Route path="/add-diet" element={<AddDiet />} />
+                <Route path="/add-pantrystaff" element={<AddPantryStaff />} />
+                <Route path="/assign-pantry" element={<AssignPantry />} />
               </Routes>
             </div>
           </div>
@@ -39,7 +48,7 @@ const App = () => {
       ) : (
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="*" element={<Navigate to="/login" />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       )}
     </>

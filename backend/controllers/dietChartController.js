@@ -1,4 +1,5 @@
 import DietChart from "../models/DietChart.js";
+import Patient from "../models/Patients.js";
 
 // GET all diet charts
 const getDietCharts = async (request, response) => {
@@ -29,6 +30,13 @@ const addDietChart = async (request, response) => {
       nightMeal,
       specialInstructions,
     } = request.body;
+
+    const patient = await Patient.findById(patientId);
+    if (!patient) {
+      return response.status(404).json({ message: "Patient not found" });
+    }
+
+    // Create a new diet chart
     const newDietChart = new DietChart({
       patientId,
       morningMeal,
@@ -38,12 +46,27 @@ const addDietChart = async (request, response) => {
       specialInstructions,
     });
 
+    // Save the new diet chart to the database
     await newDietChart.save();
-    return response
-      .status(200)
-      .json({ message: "Diet Chart Added Successfully", newDietChart });
+
+    // Populate the patient name in the response
+    const dietChartWithPatient = await DietChart.findById(
+      newDietChart._id
+    ).populate("patientId", "name");
+
+    return response.status(200).json({
+      message: "Diet Chart Added Successfully",
+      newDietChart: {
+        patientName: dietChartWithPatient.patientId.name,
+        morningMeal,
+        afternoonMeal,
+        eveningMeal,
+        nightMeal,
+        specialInstructions,
+      },
+    });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return response.status(500).json({ message: "Not Adding Diet Chart" });
   }
 };
@@ -72,16 +95,18 @@ const updateDietChart = async (request, response) => {
 };
 
 // Delete a diet chart by ID
-const deleteDietChart = async(request, response) => {
-    try {
-        const { id } = request.params;
-        await DietChart.findByIdAndDelete(id);
+const deleteDietChart = async (request, response) => {
+  try {
+    const { id } = request.params;
+    await DietChart.findByIdAndDelete(id);
 
-        return response.status(200).json({message: "Diet Chart Deleted Successfully"});
-    } catch(error){
-        console.log(error);
-        return response.status(500).json({message: "Not Deleting Diet Chart"});
-    }
-}
+    return response
+      .status(200)
+      .json({ message: "Diet Chart Deleted Successfully" });
+  } catch (error) {
+    console.log(error);
+    return response.status(500).json({ message: "Not Deleting Diet Chart" });
+  }
+};
 
 export { getDietCharts, addDietChart, updateDietChart, deleteDietChart };

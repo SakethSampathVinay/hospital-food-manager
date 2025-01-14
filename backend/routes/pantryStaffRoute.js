@@ -6,22 +6,31 @@ import {
   updatePantryStaff,
   deletePantryStaff,
 } from "../controllers/pantryStaffController.js";
-import authHospitalPantry from "../middleaware/HospitalPantryAuth.js";
+import HospitalPantryAuth from "../middleaware/HospitalPantryAuth.js";
 
 const pantryStaffRouter = express.Router();
 
-pantryStaffRouter.get("/pantry-staff", authHospitalPantry, getPantryStaff);
-pantryStaffRouter.post("/add-pantry-staff", authHospitalPantry, addPantryStaff);
+// Pantry Staff Login
+pantryStaffRouter.post("/login", loginPantryStaff);
+
+// Get all pantry staff
+pantryStaffRouter.get("/pantry-staff", HospitalPantryAuth, getPantryStaff);
+
+// Add a new pantry staff member
+pantryStaffRouter.post("/add-pantry-staff", HospitalPantryAuth, addPantryStaff);
+
+// Update a pantry staff member by ID
 pantryStaffRouter.put(
   "/pantry-staff/:id",
-  authHospitalPantry,
+  HospitalPantryAuth,
   updatePantryStaff
 );
+
+// Delete a pantry staff member by ID
 pantryStaffRouter.delete(
   "/pantry-staff/:id",
-  authHospitalPantry,
+  HospitalPantryAuth,
   deletePantryStaff
 );
-pantryStaffRouter.post("/login", loginPantryStaff);
 
 export default pantryStaffRouter;

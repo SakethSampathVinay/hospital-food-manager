@@ -168,6 +168,111 @@ const getPantryStaff = async (request, response) => {
   }
 };
 
+const addDietChart = async (request, response) => {
+  try {
+    const {
+      patientId,
+      morningMeal,
+      afternoonMeal,
+      eveningMeal,
+      nightMeal,
+      specialInstructions,
+    } = request.body;
+
+    const patient = await Patient.findById(patientId);
+    if (!patient) {
+      return response.status(404).json({ message: "Patient not found" });
+    }
+
+    // Create a new diet chart
+    const newDietChart = new DietChart({
+      patientId,
+      morningMeal,
+      afternoonMeal,
+      eveningMeal,
+      nightMeal,
+      specialInstructions,
+    });
+
+    // Save the new diet chart to the database
+    await newDietChart.save();
+
+    // Populate the patient name in the response
+    const dietChartWithPatient = await DietChart.findById(
+      newDietChart._id
+    ).populate("patientId", "name");
+
+    return response.status(200).json({
+      message: "Diet Chart Added Successfully",
+      newDietChart: {
+        patientName: dietChartWithPatient.patientId.name,
+        morningMeal,
+        afternoonMeal,
+        eveningMeal,
+        nightMeal,
+        specialInstructions,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return response.status(500).json({ message: "Not Adding Diet Chart" });
+  }
+};
+
+// Add a new Pantry Staff
+const addPantryStaff = async (request, response) => {
+  try {
+    const { name, contactInfo, role } = request.body;
+    const newPantryStaff = new PantryStaff({
+      name,
+      contactInfo,
+      role,
+    });
+    await newPantryStaff.save();
+    return response.status(200).json({
+      success: true,
+      message: "Pantry Staff Added Successfully",
+      newPantryStaff,
+    });
+  } catch (error) {
+    console.log(error);
+    return response.status(500).json({ message: "Not Adding Pantry Staff" });
+  }
+};
+
+// POST API to assign pantry staff to a patient
+const assignPantry = async (req, res) => {
+  const { patientId, pantryStaffId } = req.body;
+
+  // Validate input fields
+  if (!patientId || !pantryStaffId) {
+    return res.status(400).json({ message: "Please provide patientId and pantryStaffId." });
+  }
+
+  try {
+    // Check if pantry staff exists
+    const pantryStaff = await PantryStaff.findById(pantryStaffId);
+    if (!pantryStaff) {
+      return res.status(404).json({ message: "Pantry staff not found." });
+    }
+
+    // Check if the patient exists
+    const patient = await Patient.findById(patientId);
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found." });
+    }
+
+    // Assign pantry staff to the patient
+    patient.assignedTo = pantryStaffId;
+    await patient.save();
+
+    return res.status(200).json({ message: "Pantry staff assigned to patient successfully!", patient });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error assigning pantry staff to patient." });
+  }
+};
+
 export {
   loginPatient,
   getPatients,
@@ -177,4 +282,7 @@ export {
   adminDashboard,
   getDeliveries,
   getPantryStaff,
+  addDietChart,
+  addPantryStaff,
+  assignPantry,
 };
